@@ -1,0 +1,76 @@
+﻿@model PaginationModel
+
+@{
+    var currentPage = Model.CurrentPageNumber;
+    var totalPages = Math.Ceiling((decimal)(Model.TotalAmount / Model.AmountPerPage));
+
+    var previousPagesExists = currentPage > 1;
+    var nextPagesExists = currentPage < totalPages;
+}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @if (previousPagesExists)
+        {
+            @if (currentPage - 2 > 0)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                    asp-controller="Products"
+                    asp-action="GridView"
+                    asp-route-pageNumber="@(Model.CurrentPageNumber - 2)"
+                    asp-route-amountPerpage="18">@(Model.CurrentPageNumber - 2)</a>
+                </li>
+            }
+
+            <li class="page-item">
+                <a class="page-link"
+                asp-controller="Products"
+                asp-action="GridView"
+                asp-route-pageNumber="@(Model.CurrentPageNumber - 1)"
+                asp-route-amountPerpage="18">@(Model.CurrentPageNumber - 1)</a>
+            </li>
+        }
+
+        <li class="page-item active">
+            <a class="page-link"
+            asp-controller="Products"
+            asp-action="GridView"
+            asp-route-pageNumber="@Model.CurrentPageNumber"
+            asp-route-amountPerpage="18">@Model.CurrentPageNumber</a>
+        </li>
+
+        @if (nextPagesExists)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                asp-controller="Products"
+                asp-action="GridView"
+                asp-route-pageNumber="@(Model.CurrentPageNumber + 1)"
+                asp-route-amountPerpage="18">@(Model.CurrentPageNumber + 1)</a>
+            </li>
+
+            @if (currentPage + 2 <= totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                    asp-controller="Products"
+                    asp-action="GridView"
+                    asp-route-pageNumber="@(Model.CurrentPageNumber + 2)"
+                    asp-route-amountPerpage="18">@(Model.CurrentPageNumber + 2)</a>
+                </li>
+            }
+        }
+
+        @if(totalPages > 5 && totalPages > currentPage + 2)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   asp-controller="Products"
+                   asp-action="GridView"
+                   asp-route-pageNumber="@totalPages"
+                   asp-route-amountPerpage="18">@totalPages</a>
+            </li>
+        }
+    </ul>
+</nav>

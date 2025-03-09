@@ -1,0 +1,39 @@
+﻿@using WebShop.Presentation.Models
+@model (ProductsGridViewModel Products, ProductGridFilterViewModel Filters)
+@{
+    ViewData["Title"] = "Assortment";
+    ViewData["DisplayNavBar"] = true;
+    ViewData["ProductCategories"] = Model.Products.ProductCategories;
+}
+
+@if (Model.Products is null || !Model.Products.Products.Any())
+{
+    <div class="text-center">
+        <h2 class="mt-5">The shop is empty :(</h2>
+    </div>
+    return;
+}
+
+<div class="row">
+    @foreach (var product in Model.Products.Products)
+    {
+        <div class="col-4 mb-4">
+            <a asp-controller="Products" asp-action="ProduuctById" asp-route-id="@product.Id">
+                <partial name="/Views/Shared/_ProductCard.cshtml" model="@product" />
+            </a>
+        </div>
+    }
+
+    <div class="d-flex justify-content-center">
+        <partial name="/Views/Shared/_PaginationComponent.cshtml" model="@Model.Products" />
+    </div>
+</div>
+
+@section SideBar
+{
+    <div class="sidebar">
+        <div>
+            <partial name="/Views/Shared/_FiltersComponent.cshtml" model="Model.Filters"/>
+        </div>
+    </div>
+}
