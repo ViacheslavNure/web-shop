@@ -1,6 +1,8 @@
-﻿namespace WebShop.Presentation.Models
+﻿using WebShop.Core.Models.UIElements;
+
+namespace WebShop.Core.Models.Product
 {
-    public class ProductCardViewModel
+    public class ProductDetailsViewModel
     {
         public Guid Id { get; set; }
 
@@ -15,5 +17,9 @@
         public int LikesCount { get; set; }
 
         public string ImagePath { get; set; }
+
+        public IEnumerable<ProductFeaturesCategoryViewModel> CategorizedFeatures { get; set; }
+
+        public IEnumerable<NavBarItemViewModel> ProductCategories { get; set; }
     }
 }

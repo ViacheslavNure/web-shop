@@ -1,4 +1,5 @@
-﻿using WebShop.Core;
+﻿using Microsoft.AspNetCore.Http;
+using WebShop.Core;
 
 namespace WebShop.Presentation.Helpers
 {
@@ -16,6 +17,15 @@ namespace WebShop.Presentation.Helpers
             }
 
             return imagePath;
+        }
+
+        public static async Task SaveImageAsync(IFormFile image,string imageName, string staticFilesFolderPath)
+        {
+            var imagePath = Path.Combine(staticFilesFolderPath, Constants.ImagesFolderPath, imageName);
+            
+            using var fileStream = new FileStream(imagePath, FileMode.Create);
+
+            await image.CopyToAsync(fileStream);
         }
     }
 }

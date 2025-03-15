@@ -1,6 +1,6 @@
-﻿using WebShop.Core.Models;
+﻿using WebShop.Core.Models.UIElements;
 
-namespace WebShop.Presentation.Models
+namespace WebShop.Core.Models.Product
 {
     public class ProductsGridViewModel : PaginationModel
     {

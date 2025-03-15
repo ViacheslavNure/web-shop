@@ -1,0 +1,48 @@
+﻿.product-general-info {
+    height: 45vh;
+    background-color: rgba(229, 245, 39, 0.29);
+}
+
+.container {
+    margin-top: 100px;
+}
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.line-text {
+    text-align: left;
+    flex-grow: 1;
+}
+
+.line-button {
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.list-group-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.feature-name {
+    font-weight: bold;
+}
+
+.feature-dots {
+    flex-grow: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.feature-value {
+    margin-left: auto;
+}

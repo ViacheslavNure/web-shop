@@ -1,0 +1,52 @@
+﻿@using WebShop.Core.Models.Product
+@using WebShop.Core.Models.UIElements
+@model CreateProductViewModel
+
+@{
+    var productCategories = ViewData["ProductCategories"] as IEnumerable<NavBarItemViewModel> ?? [];
+}
+
+<div class="container fs-5" style="margin-top: 100px;">
+    <form asp-controller="Products" asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <label for="productImage" class="form-label">Завантажте зображення товару</label>
+                <input type="file" id="productImage" name="productImage" class="form-control" accept="image/*">
+                <div class="image-preview" id="imagePreview">
+                    <span>Попередній перегляд</span>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <div class="input-group">
+                    <button class="btn btn-secondary dropdown-toggle fs-5" type="button" data-bs-toggle="dropdown" aria-expanded="false">Категорія товару</button>
+                    <ul class="dropdown-menu" id="dropdownMenu">
+                        @foreach (var category in productCategories)
+                        {
+                            <li><a class="dropdown-item fs-5" href="#" data-value="@category.Name">@category.Name</a></li>
+                        }
+                    </ul>
+                    <input asp-for="Category" type="text" id="selectedValue" class="form-control fs-5" readonly>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <label asp-for="Brand" class="form-label">Brand</label>
+                <input asp-for="Brand" type="text" class="form-control">
+            </div>
+            <div class="col-12 mb-3">
+                <label asp-for="Model" class="form-label">Model</label>
+                <input asp-for="Model" type="text" class="form-control">
+            </div>
+            <div class="col-12 mb-3">
+                <label asp-for="Price" class="form-label">Price</label>
+                <input asp-for="Price" type="number" class="form-control">
+            </div>
+            <div class="col-12 mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+            </div>
+            <div class="col-12 mb-3">
+                <button type="submit" class="btn btn-secondary btn-block w-100 fs-5">Створити товар</button>
+            </div>
+        </div>
+    </form>
+</div>

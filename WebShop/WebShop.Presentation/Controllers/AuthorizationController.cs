@@ -35,7 +35,7 @@ namespace WebShop.Presentation.Controllers
             if (result.Succeeded)
             {
                 await signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(ProductsController.GridView), "Products");
             }
 
             foreach (var error in result.Errors)

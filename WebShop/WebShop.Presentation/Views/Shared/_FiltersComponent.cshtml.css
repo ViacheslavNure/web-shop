@@ -1,0 +1,7 @@
+﻿.clear-filters-button{
+    background-color: lightgray;
+}
+
+.clear-filters-button:hover {
+    background-color: darkgray;
+}

@@ -1,2 +1,75 @@
-﻿
-<h1>Product by Id</h1>
+﻿@using WebShop.Core.Models.Product
+@model ProductDetailsViewModel
+
+<div class="container">
+    <div class="row d-flex align-content-center">
+        <div class="col-6">
+            <div class="m-2">
+                <img class=" rounded-2 img-fluid product-image" src='@($"\\{Model.ImagePath}")' alt='@Model.ImagePath' />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2>@Model.Brand @Model.Model</h2>
+                    <div class="line">
+                        <h3 class="line-text">@Model.Price грн.</h3>
+                        <div class='line-button'>
+                            <span class='small'>@Model.LikesCount</span>
+                            <button class='like-button' onclick="onLikeButtonClick(event,'@Model.Id')">
+                                <span class='text-danger' style='font-size: 1.5rem;'>
+                                    <i class='fas fa-heart'></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-content-end">
+                        <a href="#" class="btn btn-dark">Додати в кошик</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3 mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Опис товару</h3>
+                    <p class="card-text">
+                        @Model.Description
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(Model.CategorizedFeatures.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card p-3">
+                    <h3>Характеристики</h3>
+                    <ul>
+                        @foreach (var featureCategory in Model.CategorizedFeatures)
+                        {
+                            <li>
+                                <h6>@featureCategory.Name</h6>
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var feature in featureCategory.Features)
+                                    {
+                                        <li class="list-group-item">
+                                            <span class="feature-name">@feature.Name</span>
+                                            <span class="feature-dots">@(new string('.', 400))</span>
+                                            <span class="feature-value">@feature.Value</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+</div>

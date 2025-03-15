@@ -1,4 +1,4 @@
-﻿namespace WebShop.Core.Models
+﻿namespace WebShop.Core.Models.Product
 {
     public class ProductGridFilterViewModel
     {

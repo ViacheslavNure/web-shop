@@ -14,9 +14,9 @@ namespace WebShop.DataGenerator
 
             using (var context = new WebShopContext(options))
             {
-                GenerateProductCategories(context);
-                GenerateFeatureCategories(context);
-                GenerateProducts(context);
+                //GenerateProductCategories(context);
+                //GenerateFeatureCategories(context);
+                //GenerateProducts(context);
                 GenerateFeatures(context);
 
                 Console.WriteLine("All data is generated.");
@@ -84,8 +84,8 @@ namespace WebShop.DataGenerator
                     Id = Guid.NewGuid(),
                     Name = $"Feature{i}",
                     Value = $"Value{i}",
-                    FeatureCategoryId = categories[random.Next(categories.Count)].Id, // Случайная категория
-                    ProductId = products[random.Next(products.Count)].Id // Случайный продукт
+                    FeatureCategoryId = categories[random.Next(categories.Count)].Id,
+                    ProductId = products.First(x=>x.Brand == "Brand13").Id
                 });
             }
 

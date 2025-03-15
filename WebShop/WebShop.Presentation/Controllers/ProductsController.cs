@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebShop.Core.Interfaces;
-using WebShop.Core.Models;
+using WebShop.Core.Models.Product;
+using WebShop.Sql.Models;
 
 namespace WebShop.Presentation.Controllers
 {
@@ -31,6 +32,8 @@ namespace WebShop.Presentation.Controllers
             ViewData["ShowNavbar"] = true;
             ViewData["Brands"] = products.AllBrands;
             TempData["SelectedCategoryId"] = selectedProductsCategoryId;
+            ViewData["ShowSideBar"] = true;
+            ViewData["ProductCategories"] = products.ProductCategories;
 
             return View((products, filters));
         }
@@ -48,15 +51,37 @@ namespace WebShop.Presentation.Controllers
         }
 
         [HttpGet]
-        public IActionResult ProductById(Guid id)
+        public async Task<IActionResult> ProductById(Guid id, CancellationToken cancellationToken)
         {
-            return View();
+            var product = await productService.GetProductDetails(id, webHostEnvironment.WebRootPath, cancellationToken);
+            ViewData["ShowNavbar"] = true;
+            ViewData["ProductCategories"] = product.ProductCategories;
+
+            return View(product);
         }
 
         [HttpPost]
         public IActionResult AddProductToCart(Guid productId)
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateProductPage(CancellationToken cancellationToken)
+        {
+            var productCategories = await productService.GetAllProductCategories(cancellationToken);
+
+            ViewData["ProductCategories"] = productCategories;
+            ViewData["ShowNavbar"] = true;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct(CreateProductViewModel productViewModel, IFormFile productImage, CancellationToken cancellationToken)
+        {
+            await productService.CreateProductAsync(productImage, webHostEnvironment.WebRootPath, productViewModel, cancellationToken);
+
+            return RedirectToAction(nameof(GridView));
         }
     }
 }

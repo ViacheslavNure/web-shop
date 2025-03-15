@@ -49,3 +49,7 @@ a {
     background: none;
     color: black;
 }
+
+.product-image {
+    aspect-ratio: 16 / 9;
+}

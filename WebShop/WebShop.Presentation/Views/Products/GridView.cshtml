@@ -1,9 +1,7 @@
-﻿@using WebShop.Presentation.Models
+﻿@using WebShop.Core.Models.Product
 @model (ProductsGridViewModel Products, ProductGridFilterViewModel Filters)
 @{
     ViewData["Title"] = "Assortment";
-    ViewData["DisplayNavBar"] = true;
-    ViewData["ProductCategories"] = Model.Products.ProductCategories;
 }
 
 @if (Model.Products is null || !Model.Products.Products.Any())
@@ -14,11 +12,11 @@
     return;
 }
 
-<div class="row">
+<div class="row" style="margin-top: 100px;">
     @foreach (var product in Model.Products.Products)
     {
         <div class="col-4 mb-4">
-            <a asp-controller="Products" asp-action="ProduuctById" asp-route-id="@product.Id">
+            <a asp-controller="Products" asp-action="ProductById" asp-route-id="@product.Id">
                 <partial name="/Views/Shared/_ProductCard.cshtml" model="@product" />
             </a>
         </div>

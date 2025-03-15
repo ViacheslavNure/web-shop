@@ -1,4 +1,4 @@
-﻿namespace WebShop.Core.Models
+﻿namespace WebShop.Core.Models.UIElements
 {
     public class NavBarItemViewModel
     {

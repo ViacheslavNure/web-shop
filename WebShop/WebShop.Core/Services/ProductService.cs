@@ -1,15 +1,91 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebShop.Core.Interfaces;
-using WebShop.Core.Models;
+using WebShop.Core.Models.UIElements;
+using WebShop.Core.Models.Product;
 using WebShop.Presentation.Helpers;
-using WebShop.Presentation.Models;
 using WebShop.Sql;
 using WebShop.Sql.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace WebShop.Core.Services
 {
     public class ProductService(WebShopContext dbContext) : IProductService
     {
+        public async Task CreateProductAsync(IFormFile productImage, string staticFolderPath, CreateProductViewModel productViewModel, CancellationToken cancellationToken)
+        {
+            var imageName = Guid.NewGuid().ToString() + Path.GetExtension(productImage.FileName);
+            await ImageHelper.SaveImageAsync(productImage, imageName, staticFolderPath);
+
+            var product = new Product
+            {
+                Brand = productViewModel.Brand,
+                Model = productViewModel.Model,
+                Description = productViewModel.Description,
+                Price = productViewModel.Price,
+                ImageName = imageName,
+                ProductCategoryId = dbContext.ProductCategory.First(x => x.Name == productViewModel.Category).Id,
+            };
+
+            await dbContext.Product.AddAsync(product, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<NavBarItemViewModel>> GetAllProductCategories(CancellationToken cancellationToken)
+        {
+            return await dbContext.ProductCategory
+                .AsNoTracking()
+                .Select(c => new NavBarItemViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                })
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<ProductDetailsViewModel> GetProductDetails(Guid productId, string staticFilesFolderPath, CancellationToken cancellationToken)
+        {
+            var product = (await dbContext.Product
+                .Include(p => p.Features)
+                    .ThenInclude(p => p.FeatureCategory)
+                .Include(p => p.ProductCategory)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == productId, cancellationToken))
+                ?? throw new ArgumentOutOfRangeException($"Product with the Id {productId} was not found.");
+
+            var categorizedFeatures = product.Features.GroupBy(f => f.FeatureCategory.Name)
+                .Select(f => new ProductFeaturesCategoryViewModel
+                {
+                    Name = f.Key,
+                    Features = f.Select(f => new ProductFeatureViewModel
+                    {
+                        Name = f.Name,
+                        Value = f.Value
+                    })
+                });
+
+            return new ProductDetailsViewModel
+            {
+                Id = product.Id,
+                Brand = product.Brand,
+                Model = product.Model,
+                Description = product.Description,
+                Price = product.Price,
+                ImagePath = ImageHelper.GetImagePath(product.ImageName, staticFilesFolderPath),
+                LikesCount = product.LikesCount,
+                CategorizedFeatures = categorizedFeatures,
+                ProductCategories = await dbContext.ProductCategory
+                .AsNoTracking()
+                .Select(c => new NavBarItemViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    RedirectToController = "Products",
+                    RedirectToAction = "GridView",
+                })
+                .ToListAsync(cancellationToken)
+            };
+        }
+
         public async Task<ProductsGridViewModel> GetProductsCollection(
             Guid selectedProductsCategoryId,
             int pageNumber,
@@ -30,7 +106,7 @@ namespace WebShop.Core.Services
                 })
                 .ToListAsync();
 
-            if(selectedProductsCategoryId == default)
+            if (selectedProductsCategoryId == default)
             {
                 selectedProductsCategoryId = categoriesQuery.First().Id;
             }
@@ -41,7 +117,7 @@ namespace WebShop.Core.Services
 
             var allBrands = await productsQuery.Select(p => p.Brand).ToListAsync();
 
-            if(filters is not null)
+            if (filters is not null)
             {
                 productsQuery = ApplyProductFilters(productsQuery, filters);
             }
@@ -80,12 +156,12 @@ namespace WebShop.Core.Services
 
         private IQueryable<Product> ApplyProductFilters(IQueryable<Product> products, ProductGridFilterViewModel filters)
         {
-            if(filters.MaxPrice.HasValue)
+            if (filters.MaxPrice.HasValue)
             {
                 products = products.Where(p => p.Price <= filters.MaxPrice);
             }
 
-            if(filters.MinPrice.HasValue)
+            if (filters.MinPrice.HasValue)
             {
                 products = products.Where(p => p.Price >= filters.MinPrice);
             }

@@ -1,0 +1,11 @@
+﻿.image-preview {
+    width: 60%;
+    aspect-ratio: 16 / 9;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    margin: 10px auto;
+    overflow: hidden;
+}
