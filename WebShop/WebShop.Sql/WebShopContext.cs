@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 using WebShop.Sql.Models;
 using WebShop.Sql.Models.Enums;
 
@@ -16,6 +17,10 @@ namespace WebShop.Sql
         public DbSet<FeatureCategory> FearureCategory { get; set; }
 
         public DbSet<ProductCategory> ProductCategory { get; set; }
+
+        public DbSet<CartProductItem> CartProductItem { get; set; }
+
+        public DbSet<Cart> Cart { get; set; }
 
         public WebShopContext()
         { }

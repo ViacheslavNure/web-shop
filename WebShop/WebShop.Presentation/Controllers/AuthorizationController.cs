@@ -2,12 +2,14 @@
 using WebShop.Core.Models.Authorization;
 using Microsoft.AspNetCore.Identity;
 using WebShop.Sql.Models;
+using WebShop.Sql;
 
 namespace WebShop.Presentation.Controllers
 {
     public class AuthorizationController(
         SignInManager<User> signInManager,
-        UserManager<User> userManager) : Controller
+        UserManager<User> userManager,
+        WebShopContext dbContext) : Controller
     {
         [HttpGet]
         public IActionResult SignupPage()
@@ -43,6 +45,8 @@ namespace WebShop.Presentation.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
+            dbContext.Cart.Add(new Cart { UserId = user.Id });
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return View(nameof(SignupPage), credentials);
         }
