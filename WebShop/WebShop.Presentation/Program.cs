@@ -1,5 +1,7 @@
 using WebShop.Presentation.Extensions;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+using WebShop.Sql.Models;
+using WebShop.Sql;
 
 namespace WebShop.Presentation
 {
@@ -13,6 +15,16 @@ namespace WebShop.Presentation
             builder.Services.ConfigureDatabase(builder.Configuration);
             builder.Services.ConfigureServices();
 
+            // Настройка аутентификации
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Authorization/LoginPage";
+                options.LogoutPath = "/Authorization/LogoutUser";
+                options.AccessDeniedPath = "/Authorization/AccessDenied";
+                options.SlidingExpiration = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+            });
+
             var app = builder.Build();
 
             if (!app.Environment.IsDevelopment())
@@ -22,8 +34,10 @@ namespace WebShop.Presentation
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();

@@ -26,7 +26,5 @@ namespace WebShop.Core.Interfaces
             string staticFolderPath,
             CreateProductViewModel productViewModel,
             CancellationToken cancellationToken);
-
-        Task AddProductToCartAsync(Guid productId, string userId, CancellationToken cancellationToken);
     }
 }

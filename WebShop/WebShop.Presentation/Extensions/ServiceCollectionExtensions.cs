@@ -17,11 +17,11 @@ namespace WebShop.Presentation.Extensions
 
             services.AddIdentity<User, IdentityRole>(options =>
             {
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 5;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
             })
             .AddEntityFrameworkStores<WebShopContext>()
             .AddDefaultTokenProviders();
@@ -31,6 +31,7 @@ namespace WebShop.Presentation.Extensions
 
         public static IServiceCollection ConfigureServices(this IServiceCollection services)
         {
+            services.AddScoped<ICartService, CartService>();
             services.AddScoped<IProductService, ProductService>();
 
             return services;

@@ -16,7 +16,7 @@
             @if (currentPage - 2 > 0)
             {
                 <li class="page-item">
-                    <a class="page-link"
+                    <a class="page-link btn-dark"
                     asp-controller="Products"
                     asp-action="GridView"
                     asp-route-pageNumber="@(Model.CurrentPageNumber - 2)"
@@ -25,7 +25,7 @@
             }
 
             <li class="page-item">
-                <a class="page-link"
+                <a class="page-link btn-dark"
                 asp-controller="Products"
                 asp-action="GridView"
                 asp-route-pageNumber="@(Model.CurrentPageNumber - 1)"
@@ -34,7 +34,7 @@
         }
 
         <li class="page-item active">
-            <a class="page-link"
+            <a class="page-link btn-dark"
             asp-controller="Products"
             asp-action="GridView"
             asp-route-pageNumber="@Model.CurrentPageNumber"
@@ -44,7 +44,7 @@
         @if (nextPagesExists)
         {
             <li class="page-item">
-                <a class="page-link"
+                <a class="page-link btn-dark"
                 asp-controller="Products"
                 asp-action="GridView"
                 asp-route-pageNumber="@(Model.CurrentPageNumber + 1)"
@@ -54,7 +54,7 @@
             @if (currentPage + 2 <= totalPages)
             {
                 <li class="page-item">
-                    <a class="page-link"
+                    <a class="page-link btn-dark"
                     asp-controller="Products"
                     asp-action="GridView"
                     asp-route-pageNumber="@(Model.CurrentPageNumber + 2)"
@@ -66,7 +66,7 @@
         @if(totalPages > 5 && totalPages > currentPage + 2)
         {
             <li class="page-item">
-                <a class="page-link"
+                <a class="page-link btn-dark"
                    asp-controller="Products"
                    asp-action="GridView"
                    asp-route-pageNumber="@totalPages"

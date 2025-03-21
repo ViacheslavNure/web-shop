@@ -35,9 +35,9 @@ $(document).ready(function () {
 // Create product feature adding mechanism
 $(document).ready(function () {
     $("#addCategoryBtn").click(function () {
-        var categoryIndex = $(".category-group").length; // Определяем индекс новой категории
+        var categoryIndex = $(".category-group").length;
         var categoryHtml = `<div class="mb-3 category-group">
-            <input type="text" class="form-control mb-2 category-name" name="Features[${categoryIndex}].Name" placeholder="Назва групи характеристик">
+            <input type="text" class="form-control mb-2 category-name h3" name="Features[${categoryIndex}].Name" placeholder="Назва групи характеристик">
             <button type="button" class="btn btn-secondary addFeatureBtn">Додати характеристику</button>
             <div class="featureContainer mt-2"></div>
         </div>`;
@@ -47,7 +47,7 @@ $(document).ready(function () {
     $(document).on("click", ".addFeatureBtn", function () {
         var categoryIndex = $(this).closest(".category-group").index(); // Получаем индекс категории
         var featureIndex = $(this).siblings(".featureContainer").children(".feature-group").length; // Индекс фичи
-        var featureHtml = `<div class="feature-group">
+        var featureHtml = `<div class="feature-group border rounded-2 p-3 mb-1">
             <input type="text" class="form-control mt-2" name="Features[${categoryIndex}].Features[${featureIndex}].Name" placeholder="Назва харктеристи">
             <input type="text" class="form-control mt-2" name="Features[${categoryIndex}].Features[${featureIndex}].Value" placeholder="Значення">
         </div>`;
@@ -59,30 +59,44 @@ $(document).ready(function () {
 document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (e) {
         const buyButton = e.target.closest('.buy-button');
-        if (!buyButton) return;
+        if (!buyButton || buyButton.disabled) return;
 
         e.stopPropagation();
         e.preventDefault();
 
+        buyButton.disabled = true;
+        const originalText = buyButton.textContent;
+        buyButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Додавання...';
+
         const productId = buyButton.getAttribute('data-product-id');
         console.log(productId);
 
-        fetch('/Products/AddProductToCart', {
+        fetch('/cart/AddProductToCart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ productId: productId })
         })
-            .then(response => response.json())
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                }
+                return response.json();
+            })
             .then(data => {
-                if (!data.success) {
+                if (data && !data.success) {
                     alert('Під час додавання товару до кошика виникла помилка.');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Під час додавання товару до кошика виникла помилка.');
+            })
+            .finally(() => {
+                buyButton.disabled = false;
+                buyButton.textContent = originalText;
             });
     });
 }); 

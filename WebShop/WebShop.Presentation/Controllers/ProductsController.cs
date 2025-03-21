@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebShop.Core.Interfaces;
 using WebShop.Core.Models.Product;
-using WebShop.Sql.Models;
 
 namespace WebShop.Presentation.Controllers
 {
     // [Authorize]
     public class ProductsController(
         IWebHostEnvironment webHostEnvironment,
-        IProductService productService,
-        UserManager<User> userManager) : Controller
+        IProductService productService) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> GridView(
@@ -63,28 +59,6 @@ namespace WebShop.Presentation.Controllers
             ViewData["ProductCategories"] = product.ProductCategories;
 
             return View(product);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> AddProductToCart([FromBody] AddToCartRequest request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                if (!User.Identity.IsAuthenticated)
-                {
-                    return RedirectToAction(nameof(AuthorizationController.LoginUser), "Authorization");
-                }
-
-                var userId = userManager.GetUserId(User);
-
-                await productService.AddProductToCartAsync(request.ProductId, userId, cancellationToken);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
         }
 
         [HttpGet]

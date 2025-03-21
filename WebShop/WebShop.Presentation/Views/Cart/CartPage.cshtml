@@ -1,0 +1,202 @@
+@model WebShop.Core.Models.Product.CartViewModel
+
+<div class="container mt-5 pt-5">
+    <h2 class="mb-4">Корзина</h2>
+    
+    @if (Model.Items.Any())
+    {
+        <div class="row">
+            <div class="col-md-8">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="card mb-3" data-product-id="@item.Id">
+                        <div class="row g-0">
+                            <div class="col-md-3">
+                                <img src='@($"\\{item.ImagePath}")' class="img-fluid rounded-start" alt="@item.Brand @item.Model">
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5 class="card-title">@item.Brand</h5>
+                                            <p class="card-text">@item.Model</p>
+                                            <p class="card-text"><small class="text-muted item-price">Цена: @item.Price грн.</small></p>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="input-group me-3" style="width: 120px;">
+                                                <button class="btn btn-outline-secondary decrease-quantity" type="button">-</button>
+                                                <input type="text" class="form-control text-center quantity-input" data-product-id="@item.Id" value="@item.Quantity">
+                                                <button class="btn btn-outline-secondary increase-quantity" type="button">+</button>
+                                            </div>
+                                            <button class="btn btn-outline-danger remove-item" data-product-id="@item.Id" data-product-name="@($"{item.Brand} {item.Model}")">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Итого</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Товаров:</span>
+                            <span id="totalItems">@Model.TotalItems</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Сумма:</span>
+                            <span id="totalPrice" class="h5 mb-0">@Model.TotalPrice грн.</span>
+                        </div>
+                        <button class="btn btn-primary w-100">Оформить заказ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
+            <h3>Корзина пуста</h3>
+            <p class="text-muted">Добавьте товары в корзину, чтобы оформить заказ</p>
+            <a asp-controller="Products" asp-action="GridView" class="btn btn-primary">Перейти к покупкам</a>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить товар <span id="productName"></span> из корзины?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const productId = input.getAttribute('data-product-id');
+                const decreaseBtn = input.parentElement.querySelector('.decrease-quantity');
+                const increaseBtn = input.parentElement.querySelector('.increase-quantity');
+
+                input.addEventListener('change', () => {
+                    let value = parseInt(input.value);
+                    if (isNaN(value) || value < 1) {
+                        value = 1;
+                        input.value = 1;
+                    }
+                    updateQuantity(productId, value);
+                });
+
+                decreaseBtn.addEventListener('click', () => {
+                    let value = parseInt(input.value);
+                    if (value > 1) {
+                        input.value = --value;
+                        updateQuantity(productId, value);
+                    }
+                });
+
+                increaseBtn.addEventListener('click', () => {
+                    let value = parseInt(input.value);
+                    input.value = ++value;
+                    updateQuantity(productId, value);
+                });
+            });
+
+            async function updateQuantity(productId, quantity) {
+                try {
+                    console.log(productId, quantity);
+                    const response = await fetch('/Cart/UpdateQuantity', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productId, quantity })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        document.getElementById('totalItems').textContent = data.totalItems;
+                        document.getElementById('totalPrice').textContent = data.totalPrice + ' грн.';
+
+                        const card = document.querySelector(`[data-product-id="${productId}"]`);
+                        const priceElement = card.querySelector('.item-price');
+                        priceElement.textContent = `Ціна: ${data.itemPrice} грн.`;
+                    } else {
+                        alert('Произошла ошибка при обновлении количества товара');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при обновлении количества товара');
+                }
+            }
+
+            let deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            let currentProductId = null;
+            let currentButton = null;
+
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentProductId = this.getAttribute('data-product-id');
+                    currentButton = this;
+                    const productName = this.getAttribute('data-product-name');
+                    document.getElementById('productName').textContent = productName;
+                    deleteModal.show();
+                });
+            });
+
+            document.getElementById('confirmDelete')?.addEventListener('click', async function() {
+                if (currentProductId && currentButton) {
+                    try {
+                        const response = await fetch('/Cart/RemoveFromCart', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId: currentProductId })
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            const card = currentButton.closest('.card');
+                            card.remove();
+
+                            const remainingItems = document.querySelectorAll('.card[data-product-id]');
+                            if (remainingItems.length === 0) {
+                                window.location.reload();
+                            }
+
+                            document.getElementById('totalItems').textContent = data.totalItems;
+                            document.getElementById('totalPrice').textContent = data.totalPrice + ' грн.';
+                        } else {
+                            alert('Ошибка при удалении товара из корзины');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Произошла ошибка при удалении товара из корзины');
+                    } finally {
+                        deleteModal.hide();
+                        currentProductId = null;
+                        currentButton = null;
+                    }
+                }
+            });
+        });
+    </script>
+} 

@@ -173,46 +173,5 @@ namespace WebShop.Core.Services
 
             return products;
         }
-
-        public async Task AddProductToCartAsync(Guid productId, string userId, CancellationToken cancellationToken)
-        {
-            // TODO Разобраться почему добавляется много одинаковых товаров
-
-            var productExists = dbContext.Product.AsNoTracking().Any(p => p.Id == productId);
-            if (!productExists)
-            {
-                throw new ArgumentException($"Product with ID {productId} not found");
-            }
-
-            var cart = await dbContext.Cart
-                    .Include(c => c.ProductItems)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
-
-            if (cart == null)
-            {
-                throw new ArgumentException($"Cart for the user with ID {userId} not found");
-            }
-
-            var existingCartItem = cart.ProductItems
-                .FirstOrDefault(item => item.ProductId == productId);
-
-            if (existingCartItem != null)
-            {
-                existingCartItem.ProductsAmmount += 1;
-            }
-            else
-            {
-                cart.ProductItems.Add(new CartProductItem
-                {
-                    ProductId = productId,
-                    ProductsAmmount = 1,
-                    CartId = cart.Id,
-                    
-                });
-            }
-
-            await dbContext.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }
