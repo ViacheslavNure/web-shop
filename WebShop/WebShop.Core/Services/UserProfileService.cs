@@ -17,7 +17,6 @@ namespace WebShop.Core.Services
             var orders = await dbContext.Order
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.CreationDate)
-                .Take(5)
                 .Select(o => new UserOrderViewModel
                 {
                     OrderNumber = o.PublicOrderNumber,

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebShop.Core.Helpers;
 using WebShop.Core.Interfaces;
 using WebShop.Core.Models.Cart;
 using WebShop.Core.Models.Product;
-using WebShop.Presentation.Helpers;
 using WebShop.Sql;
 using WebShop.Sql.Models;
 
@@ -18,7 +18,11 @@ namespace WebShop.Core.Services
 
             if (cart == null)
             {
-                throw new ArgumentException($"Cart for the user with ID {userId} not found");
+                cart = new Cart
+                {
+                    UserId = userId,
+                    ProductItems = new List<AmountOfProducts>()
+                };
             }
 
             var existingCartItem = cart.ProductItems

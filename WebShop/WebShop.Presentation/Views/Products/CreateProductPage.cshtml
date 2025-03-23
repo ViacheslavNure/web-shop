@@ -4,6 +4,9 @@
 
 @{
     var productCategories = ViewData["ProductCategories"] as IEnumerable<NavBarItemViewModel> ?? [];
+
+    ViewData["ShowBackButton"] = true;
+    ViewData["BackButtonData"] = ("Products", "GridView");
 }
 
 <div class="container fs-5" style="margin-top: 100px;">

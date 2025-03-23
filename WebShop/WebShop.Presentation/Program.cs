@@ -7,7 +7,7 @@ namespace WebShop.Presentation
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +45,36 @@ namespace WebShop.Presentation
                 name: "default",
                 pattern: "{controller=Products}/{action=GridView}/{id?}")
                 .WithStaticAssets();
+
+            using var scope = app.Services.CreateScope();
+
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+            if (await userManager.FindByNameAsync("admin") == null)
+            {
+                var user = new User
+                {
+                    UserName = "admin",
+                    Email = "admin@gm.com",
+                    PhoneNumber = "0000000000",
+                };
+
+                await userManager.CreateAsync(user, "Admin123!");
+            }
+
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roles = new[] { "Admin", "User" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+
+            var adminUser = await userManager.FindByNameAsync("admin");
+
+            await userManager.AddToRoleAsync(adminUser!, "Admin");
 
             app.Run();
         }

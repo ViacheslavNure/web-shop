@@ -2,6 +2,9 @@
 @model UserSignupCredentialsViewModel
 @{
     ViewBag.Title = "Реєстрація";
+
+    ViewData["ShowBackButton"] = true;
+    ViewData["BackButtonData"] = ("Authorization", "LoginPage");
 }
 
 <div style="margin-top: 100px;">

@@ -14,6 +14,8 @@ namespace WebShop.Presentation.Controllers
         [HttpGet]
         public IActionResult SignupPage()
         {
+            ViewData["ShowNavbar"] = true;
+
             return View();
         }
 
@@ -45,15 +47,14 @@ namespace WebShop.Presentation.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
-            dbContext.Cart.Add(new Cart { UserId = user.Id });
-            await dbContext.SaveChangesAsync(cancellationToken);
-
             return View(nameof(SignupPage), credentials);
         }
 
         [HttpGet]
         public IActionResult LoginPage()
         {
+            ViewData["ShowNavbar"] = true;
+
             return View();
         }
 

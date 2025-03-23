@@ -2,7 +2,12 @@
 @using WebShop.Core.Extensions
 @using WebShop.Core.Models.Order
 
-<div class="container mt-5 pt-5">
+@{
+    ViewData["ShowBackButton"] = true;
+    ViewData["BackButtonData"] = ("Cart", "CartPage");
+}
+
+<div class="container" style="margin-top: 100px;">
     <h2 class="mb-4">Оформлення замовлення</h2>
 
     <form asp-controller="Orders" asp-action="SubmitOrder" method="post">

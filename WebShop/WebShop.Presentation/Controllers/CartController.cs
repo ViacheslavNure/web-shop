@@ -34,7 +34,13 @@ namespace WebShop.Presentation.Controllers
                 var userId = userManager.GetUserId(User);
 
                 await cartService.AddProductToCartAsync(request.ProductId, userId, cancellationToken);
-                return Json(new { success = true });
+                
+                var cart = await cartService.GetCartByUserIdAsync(
+                    userId!,
+                    webHostEnvironment.WebRootPath,
+                    cancellationToken);
+
+                return Json(new { success = true, count = cart.TotalItems });
             }
             catch (Exception ex)
             {
@@ -59,7 +65,8 @@ namespace WebShop.Presentation.Controllers
                 {
                     success = true,
                     totalItems = updatedCart.TotalItems,
-                    totalPrice = updatedCart.TotalPrice
+                    totalPrice = updatedCart.TotalPrice,
+                    count = updatedCart.TotalItems
                 });
             }
             catch (Exception ex)
@@ -86,6 +93,25 @@ namespace WebShop.Presentation.Controllers
                 totalPrice = updatedCart.TotalPrice,
                 itemPrice = updatedCart.Items.FirstOrDefault(x => x.Id == request.ProductId)?.Price * request.Quantity
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCartCount(CancellationToken cancellationToken)
+        {
+            try
+            {
+                var userId = userManager.GetUserId(User);
+                var cart = await cartService.GetCartByUserIdAsync(
+                    userId!,
+                    webHostEnvironment.WebRootPath,
+                    cancellationToken);
+
+                return Json(new { success = true, count = cart.TotalItems });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 } 

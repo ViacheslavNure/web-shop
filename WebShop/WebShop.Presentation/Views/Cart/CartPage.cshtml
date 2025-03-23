@@ -1,7 +1,12 @@
 @model WebShop.Core.Models.Cart.CartViewModel
 
-<div class="container mt-5 pt-5">
-    <h2 class="mb-4">Корзина</h2>
+@{
+    ViewData["ShowBackButton"] = true;
+    ViewData["BackButtonData"] = ("Products", "GridView");
+}
+
+<div class="container" style="margin-top: 100px;">
+    <h2 class="mb-4">Кошик</h2>
     
     @if (Model.Items.Any())
     {
@@ -131,10 +136,7 @@
                     if (data.success) {
                         document.getElementById('totalItems').textContent = data.totalItems;
                         document.getElementById('totalPrice').textContent = data.totalPrice + ' грн.';
-
-                        const card = document.querySelector(`[data-product-id="${productId}"]`);
-                        const priceElement = card.querySelector('.item-price');
-                        priceElement.textContent = `Ціна: ${data.itemPrice} грн.`;
+                        updateCartItemCount(data.count);
                     } else {
                         alert('Виникла помилка під час оновлення кількості товару');
                     }
@@ -181,6 +183,7 @@
 
                             document.getElementById('totalItems').textContent = data.totalItems;
                             document.getElementById('totalPrice').textContent = data.totalPrice + ' грн.';
+                            updateCartItemCount(data.count);
                         } else {
                             alert('Виникла помилка під час видалення товару з корзини');
                         }

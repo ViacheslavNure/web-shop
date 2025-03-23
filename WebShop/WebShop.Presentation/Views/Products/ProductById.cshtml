@@ -1,73 +1,64 @@
 ﻿@using WebShop.Core.Models.Product
 @model ProductDetailsViewModel
 
-<div class="container">
-    <div class="row d-flex align-content-center">
-        <div class="col-6">
-            <div class="m-2">
-                <img class=" rounded-2 img-fluid product-image" src='@($"\\{Model.ImagePath}")' alt='@Model.ImagePath' />
+@{
+    ViewData["ShowBackButton"] = true;
+    ViewData["BackButtonData"] = ("Products", "GridView");
+}
+
+<div class="container product-details" style="margin-top: 100px;">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="product-image-container">
+                <img class="product-image img-fluid" src='@($"\\{Model.ImagePath}")' alt='@Model.Brand @Model.Model' />
             </div>
         </div>
-        <div class="col-6">
-            <div class="card">
-                <div class="card-body">
-                    <h2>@Model.Brand @Model.Model</h2>
-                    <div class="line">
-                        <h3 class="line-text">@Model.Price грн.</h3>
-                        <div class='line-button'>
-                            <span class='small'>@Model.LikesCount</span>
-                            <button class='like-button' onclick="onLikeButtonClick(event,'@Model.Id')">
-                                <span class='text-danger' style='font-size: 1.5rem;'>
-                                    <i class='fas fa-heart'></i>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row d-flex align-content-end">
-                        <a href="#" class="btn btn-dark">Додати в кошик</a>
-                    </div>
+        <div class="col-md-6">
+            <div class="product-info">
+                <h1 class="product-title">@Model.Brand @Model.Model</h1>
+                <div class="price-section">
+                    <h2 class="product-price">@Model.Price грн</h2>
                 </div>
+                <a class="btn btn-dark btn-lg w-100 add-to-cart-btn buy-button" data-product-id="@Model.Id">
+                    <i class="bi bi-bag-fill me-2"></i>
+                    Додати в кошик
+                </a>
             </div>
         </div>
     </div>
 
-    <div class="row mt-3 mb-3">
+    <div class="row mt-5">
         <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3>Опис товару</h3>
-                    <p class="card-text">
-                        @Model.Description
-                    </p>
-                </div>
+            <div class="description-section">
+                <h3 class="section-title">Опис товару</h3>
+                <p class="description-text">@Model.Description</p>
             </div>
         </div>
     </div>
 
     @if(Model.CategorizedFeatures.Any())
     {
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-12">
-                <div class="card p-3">
-                    <h3>Характеристики</h3>
-                    <ul>
+                <div class="features-section">
+                    <h3 class="section-title">Характеристики</h3>
+                    <div class="features-list">
                         @foreach (var featureCategory in Model.CategorizedFeatures)
                         {
-                            <li>
-                                <h6>@featureCategory.Name</h6>
-                                <ul class="list-group list-group-flush">
+                            <div class="feature-category">
+                                <h4 class="category-name">@featureCategory.Name</h4>
+                                <div class="feature-items">
                                     @foreach (var feature in featureCategory.Features)
                                     {
-                                        <li class="list-group-item">
+                                        <div class="feature-item">
                                             <span class="feature-name">@feature.Name</span>
-                                            <span class="feature-dots">@(new string('.', 400))</span>
                                             <span class="feature-value">@feature.Value</span>
-                                        </li>
+                                        </div>
                                     }
-                                </ul>
-                            </li>
+                                </div>
+                            </div>
                         }
-                    </ul>
+                    </div>
                 </div>
             </div>
         </div>

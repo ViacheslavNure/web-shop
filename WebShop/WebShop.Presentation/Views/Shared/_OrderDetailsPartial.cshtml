@@ -41,20 +41,20 @@
                     {
                         <tr>
                             <td>
-                                <img src="@item.ImagePath" alt="@item.Model" class="img-thumbnail" style="max-width: 50px;">
+                                <img src='@($"\\{item.ImagePath}")' alt="@item.Model" class="img-thumbnail" style="max-width: 50px;">
                             </td>
                             <td>@item.Brand</td>
                             <td>@item.Model</td>
                             <td>@item.Quantity</td>
-                            <td>@item.Price.ToString("C2")</td>
-                            <td>@((item.Price * item.Quantity).ToString("C2"))</td>
+                            <td>@item.Price грн.</td>
+                            <td>@(item.Price * item.Quantity) грн.</td>
                         </tr>
                     }
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="5" class="text-end"><strong>Загальна сума:</strong></td>
-                        <td><strong>@Model.TotalPrice.ToString("C2")</strong></td>
+                        <td><strong>@Model.TotalPrice грн.</strong></td>
                     </tr>
                 </tfoot>
             </table>

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using WebShop.Core;
 
-namespace WebShop.Presentation.Helpers
+namespace WebShop.Core.Helpers
 {
     public static class ImageHelper
     {

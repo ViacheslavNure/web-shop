@@ -6,7 +6,7 @@ namespace WebShop.Core.Models.Order
     {
         public Guid Id { get; set; }
 
-        public ulong PublicOrderNumber { get; set; }
+        public long PublicOrderNumber { get; set; }
 
         public string DeliveryAddress { get; set; }
 

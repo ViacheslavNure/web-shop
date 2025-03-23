@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using WebShop.Core.Models.Order;
 using Microsoft.AspNetCore.Authorization;
 using WebShop.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using WebShop.Core.Models.Cart;
 
 namespace WebShop.Presentation.Controllers
 {
@@ -42,9 +40,9 @@ namespace WebShop.Presentation.Controllers
             if (string.IsNullOrEmpty(userId))
                 return RedirectToAction("LoginPage", "Authorization");
 
-            var publicOrerNumber = await orderService.CreateOrderAsync(userId, webHostEnvironment.WebRootPath, model, cancellationToken);
+            var publicOrderNumber = await orderService.CreateOrderAsync(userId, model, cancellationToken);
 
-            return RedirectToAction("OrderSuccessfullyCreatedPage", new { publicOrerNumber });
+            return RedirectToAction("OrderSuccessfullyCreatedPage", new { publicOrderNumber });
         }
 
         [HttpGet]
@@ -54,44 +52,9 @@ namespace WebShop.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetOrderDetails(ulong orderNumber)
+        public async Task<IActionResult> GetOrderDetails(long orderNumber, CancellationToken cancellationToken)
         {
-            // Моковые данные для демонстрации
-            var viewModel = new OrderViewModel
-            {
-                Id = Guid.NewGuid(),
-                PublicOrderNumber = orderNumber,
-                DeliveryAddress = "вул. Шевченка, 15, кв. 45",
-                City = "Київ",
-                PostalCode = "01001",
-                DeliveryMethod = DeliveryMethod.NovaPoshta,
-                CardNumber = "4111111111111111",
-                CardExpiry = "12/25",
-                CardCvv = "123",
-                OrderComments = "Будь ласка, дзвоніть перед доставкою",
-                TotalPrice = 2499.99m,
-                Items = new List<CartItemViewModel>
-                {
-                    new CartItemViewModel
-                    {
-                        Id = Guid.NewGuid(),
-                        Brand = "Apple",
-                        Model = "iPhone 15 Pro",
-                        Price = 1499.99m,
-                        ImagePath = "/images/products/iphone15pro.jpg",
-                        Quantity = 1
-                    },
-                    new CartItemViewModel
-                    {
-                        Id = Guid.NewGuid(),
-                        Brand = "Apple",
-                        Model = "AirPods Pro",
-                        Price = 500.00m,
-                        ImagePath = "/images/products/airpodspro.jpg",
-                        Quantity = 2
-                    }
-                }
-            };
+            var viewModel = await orderService.GetOrderDetailsAsync(orderNumber, webHostEnvironment.WebRootPath, cancellationToken);
 
             return PartialView("_OrderDetailsPartial", viewModel);
         }

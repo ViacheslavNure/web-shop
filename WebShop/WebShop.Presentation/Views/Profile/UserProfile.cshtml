@@ -8,7 +8,12 @@
         DeliveryMethod.UkrPoshta => "УкрПошта",
         DeliveryMethod.SelfPickup => "Самовивіз",
         _ => "Невідомий метод"
-    };  
+    };
+
+    var phoneNumber = $"+38{Model.PhoneNumber}";
+
+    ViewData["ShowBackButton"] = true;
+    ViewData["BackButtonData"] = ("Products", "GridView");
 }
 
 <div class="container py-5" style="margin-top: 50px;">
@@ -20,7 +25,7 @@
                          alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
                     <h5 class="my-3">@Model.UserName</h5>
                     <p class="text-muted mb-1">@Model.Email</p>
-                    <p class="text-muted mb-4">@Model.PhoneNumber</p>
+                    <p class="text-muted mb-4">@phoneNumber</p>
                 </div>
             </div>
             <div class="card mb-4">
@@ -44,7 +49,7 @@
         <div class="col-lg-8">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title mb-4">Останні замовлення</h5>
+                    <h5 class="card-title mb-4">Мої замовлення</h5>
                     @if (Model.RecentOrders != null && Model.RecentOrders.Any())
                     {
                         <div class="table-responsive">

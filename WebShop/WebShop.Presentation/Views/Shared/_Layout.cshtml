@@ -2,6 +2,8 @@
 @{
     var showNavbar = (bool?)ViewData["ShowNavbar"] ?? false;
     var showSideBar = (bool?)ViewData["ShowSideBar"] ?? false;
+    var showBackButton = (bool?)ViewData["ShowBackButton"] ?? false;
+    var backButtonData = (ValueTuple<string, string>?)ViewData["BackButtonData"];
     var navBarItems = (IEnumerable<NavBarItemViewModel>?)ViewData["ProductCategories"] ?? [];
 }
 <!DOCTYPE html>
@@ -14,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
@@ -21,6 +24,12 @@
     {
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow fixed-top">
             <div class="container-fluid">
+                <div class="d-flex justify-content-start align-items-center">
+                    @if (showBackButton && backButtonData != null)
+                    {
+                        @await Html.PartialAsync("_BackButtonPartial", backButtonData)
+                    }
+                </div>
                 @if (navBarItems.Any())
                 {
                     <div class="navbar-collapse collapse d-sm-inline-flex">
@@ -29,27 +38,35 @@
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark"
-                                       asp-controller="@item.RedirectToController"
-                                       asp-action="@item.RedirectToAction"
-                                       asp-route-selectedProductsCategoryId="@item.Id">@item.Name</a>
+                                    asp-controller="@item.RedirectToController"
+                                    asp-action="@item.RedirectToAction"
+                                    asp-route-selectedProductsCategoryId="@item.Id">@item.Name</a>
                                 </li>
                             }
                         </ul>
                     </div>
                 }
-                <div class="d-flex justify-content-end w-100">
-                    <a asp-controller="Products" asp-action="CreateProductPage" class="btn btn-secondary me-2" style="color: white;"><i class="fa fa-plus"></i> Create product</a>
-                    <a asp-controller="Cart" asp-action="CartPage" class="btn btn-secondary me-2" style="color: white;"><i class="fa-solid fa-cart-shopping"></i> Cart</a>
+                <div class="d-flex justify-content-end align-items-center">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Products" asp-action="CreateProductPage" class="btn btn-secondary me-2"><i class="fa fa-plus"></i>Створити товар</a>
+                    }
+                    <a asp-controller="Cart" asp-action="CartPage" class="btn btn-secondary me-2 position-relative">
+                        <i class="fa-solid fa-cart-shopping"></i>Кошик
+                        <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                            0
+                        </span>
+                    </a>
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <a asp-controller="Profile" asp-action="UserProfile" class="btn btn-secondary me-2" style="color: white;"><i class="fa-solid fa-user"></i> Мій профіль</a>
+                        <a asp-controller="Profile" asp-action="UserProfile" class="btn btn-secondary me-2"><i class="fa-solid fa-user"></i>Мій профіль</a>
                         <form asp-controller="Authorization" asp-action="Logout" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-secondary" style="color: white;"><i class="fa-solid fa-right-from-bracket"></i> Вийти</button>
+                            <button type="submit" class="btn btn-secondary"><i class="fa-solid fa-right-from-bracket"></i>Вийти</button>
                         </form>
                     }
                     else
                     {
-                        <a asp-controller="Authorization" asp-action="LoginPage" class="btn btn-secondary" style="color: white;"><i class="fa-solid fa-user"></i> Login</a>
+                        <a asp-controller="Authorization" asp-action="LoginPage" class="btn btn-secondary"><i class="fa-solid fa-user"></i>Увійти</a>
                     }
                 </div>
             </div>
@@ -81,6 +98,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,11 +1,4 @@
-﻿// Like button clicked handler
-onLikeButtonClick = function (e, productId) {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log('Liked Product ID:', productId);
-}
-
-// Create product dropdown script
+﻿// Create product dropdown script
 $(document).ready(function () {
     $(".dropdown-item").click(function () {
         var selectedText = $(this).attr("data-value");
@@ -57,46 +50,55 @@ $(document).ready(function () {
 
 // Add to cart mechanism
 document.addEventListener('DOMContentLoaded', function () {
-    document.addEventListener('click', function (e) {
-        const buyButton = e.target.closest('.buy-button');
-        if (!buyButton || buyButton.disabled) return;
+    document.querySelectorAll('.buy-button').forEach(button => {
+        button.addEventListener('click', async function (e) {
 
-        e.stopPropagation();
-        e.preventDefault();
+            e.stopPropagation();
+            e.preventDefault();
 
-        buyButton.disabled = true;
-        const originalText = buyButton.textContent;
-        buyButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Додавання...';
+            const productId = this.getAttribute('data-product-id');
 
-        const productId = buyButton.getAttribute('data-product-id');
-        console.log(productId);
+            try {
+                const response = await fetch('/Cart/AddProductToCart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId })
+                });
 
-        fetch('/cart/AddProductToCart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ productId: productId })
-        })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                    return;
+                const data = await response.json();
+                if (data.success) {
+                    updateCartItemCount(data.count);
+                } else {
+                    alert('Помилка при додаванні товару до кошика');
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (data && !data.success) {
-                    alert('Під час додавання товару до кошика виникла помилка.');
-                }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error:', error);
-                alert('Під час додавання товару до кошика виникла помилка.');
-            })
-            .finally(() => {
-                buyButton.disabled = false;
-                buyButton.textContent = originalText;
-            });
+                alert('Помилка при додаванні товару до кошика');
+            }
+        });
     });
+}); 
+
+function updateCartItemCount(count) {
+    const cartItemCount = document.getElementById('cartItemCount');
+    if (count > 0) {
+        cartItemCount.textContent = count;
+        cartItemCount.style.display = 'block';
+    } else {
+        cartItemCount.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        const response = await fetch('/Cart/GetCartCount');
+        const data = await response.json();
+        if (data.success) {
+            updateCartItemCount(data.count);
+        }
+    } catch (error) {
+        console.error('Error fetching cart count:', error);
+    }
 }); 

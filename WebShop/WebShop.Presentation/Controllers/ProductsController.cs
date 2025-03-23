@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using WebShop.Core.Interfaces;
 using WebShop.Core.Models.Product;
 
 namespace WebShop.Presentation.Controllers
 {
-    // [Authorize]
     public class ProductsController(
         IWebHostEnvironment webHostEnvironment,
         IProductService productService) : Controller
@@ -62,6 +62,7 @@ namespace WebShop.Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProductPage(CancellationToken cancellationToken)
         {
             var productCategories = await productService.GetAllProductCategories(cancellationToken);
@@ -72,6 +73,7 @@ namespace WebShop.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct(CreateProductViewModel productViewModel, IFormFile productImage, CancellationToken cancellationToken)
         {
             await productService.CreateProductAsync(productImage, webHostEnvironment.WebRootPath, productViewModel, cancellationToken);

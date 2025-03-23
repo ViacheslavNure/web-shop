@@ -2,10 +2,10 @@
 using WebShop.Core.Interfaces;
 using WebShop.Core.Models.UIElements;
 using WebShop.Core.Models.Product;
-using WebShop.Presentation.Helpers;
 using WebShop.Sql;
 using WebShop.Sql.Models;
 using Microsoft.AspNetCore.Http;
+using WebShop.Core.Helpers;
 
 namespace WebShop.Core.Services
 {
