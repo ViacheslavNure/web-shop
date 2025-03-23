@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebShop.Core.Interfaces;
+using WebShop.Core.Models.Cart;
 using WebShop.Core.Models.Product;
 using WebShop.Presentation.Helpers;
 using WebShop.Sql;
@@ -29,7 +30,7 @@ namespace WebShop.Core.Services
             }
             else
             {
-                cart.ProductItems.Add(new CartProductItem
+                cart.ProductItems.Add(new AmountOfProducts
                 {
                     ProductId = productId,
                     ProductsAmmount = 1,

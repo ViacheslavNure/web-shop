@@ -7,5 +7,9 @@ namespace WebShop.Sql.Models
         public Guid CartId { get; set; }
 
         public virtual Cart Cart { get; set; }
+
+        public virtual ICollection<PaymentDetails> PaymentDetails { get; set; }
+
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

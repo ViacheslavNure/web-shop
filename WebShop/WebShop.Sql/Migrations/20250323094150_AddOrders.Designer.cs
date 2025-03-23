@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebShop.Sql;
 
@@ -11,9 +12,11 @@ using WebShop.Sql;
 namespace WebShop.Sql.Migrations
 {
     [DbContext(typeof(WebShopContext))]
-    partial class WebShopContextModelSnapshot : ModelSnapshot
+    [Migration("20250323094150_AddOrders")]
+    partial class AddOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,13 +169,31 @@ namespace WebShop.Sql.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("WebShop.Sql.Models.AmountOfProducts", b =>
+            modelBuilder.Entity("WebShop.Sql.Models.Cart", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CartId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Cart");
+                });
+
+            modelBuilder.Entity("WebShop.Sql.Models.CartProductItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CartId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("OrderId")
@@ -192,25 +213,7 @@ namespace WebShop.Sql.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("AmountOfProducts");
-                });
-
-            modelBuilder.Entity("WebShop.Sql.Models.Cart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Cart");
+                    b.ToTable("CartProductItem");
                 });
 
             modelBuilder.Entity("WebShop.Sql.Models.Feature", b =>
@@ -527,11 +530,24 @@ namespace WebShop.Sql.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebShop.Sql.Models.AmountOfProducts", b =>
+            modelBuilder.Entity("WebShop.Sql.Models.Cart", b =>
+                {
+                    b.HasOne("WebShop.Sql.Models.User", "User")
+                        .WithOne("Cart")
+                        .HasForeignKey("WebShop.Sql.Models.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebShop.Sql.Models.CartProductItem", b =>
                 {
                     b.HasOne("WebShop.Sql.Models.Cart", "Cart")
                         .WithMany("ProductItems")
-                        .HasForeignKey("CartId");
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WebShop.Sql.Models.Order", "Order")
                         .WithMany("Products")
@@ -548,17 +564,6 @@ namespace WebShop.Sql.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("WebShop.Sql.Models.Cart", b =>
-                {
-                    b.HasOne("WebShop.Sql.Models.User", "User")
-                        .WithOne("Cart")
-                        .HasForeignKey("WebShop.Sql.Models.Cart", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebShop.Sql.Models.Feature", b =>
@@ -600,14 +605,17 @@ namespace WebShop.Sql.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
+                                .IsRequired()
                                 .HasMaxLength(50)
                                 .HasColumnType("nvarchar(50)");
 
                             b1.Property<string>("OrderDeliveryAddress")
+                                .IsRequired()
                                 .HasMaxLength(200)
                                 .HasColumnType("nvarchar(200)");
 
                             b1.Property<string>("PostalCode")
+                                .IsRequired()
                                 .HasMaxLength(10)
                                 .HasColumnType("nvarchar(10)");
 

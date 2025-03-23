@@ -33,6 +33,8 @@ namespace WebShop.Presentation.Extensions
         {
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IUserProfileService, UserProfileService>();
 
             return services;
         }

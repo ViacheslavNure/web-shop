@@ -11,6 +11,6 @@ namespace WebShop.Sql.Models
 
         public virtual User User { get; set; }
 
-        public virtual ICollection<CartProductItem> ProductItems { get; set; }
+        public virtual ICollection<AmountOfProducts> ProductItems { get; set; }
     }
 }

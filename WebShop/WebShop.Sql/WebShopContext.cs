@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
 using WebShop.Sql.Models;
 using WebShop.Sql.Models.Enums;
 
@@ -18,9 +17,13 @@ namespace WebShop.Sql
 
         public DbSet<ProductCategory> ProductCategory { get; set; }
 
-        public DbSet<CartProductItem> CartProductItem { get; set; }
+        public DbSet<AmountOfProducts> AmountOfProducts { get; set; }
 
         public DbSet<Cart> Cart { get; set; }
+
+        public DbSet<Order> Order { get; set; }
+
+        public DbSet<PaymentDetails> PaymentDetails { get; set; }
 
         public WebShopContext()
         { }
@@ -32,6 +35,10 @@ namespace WebShop.Sql
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.HasSequence<long>("OrderNumbers")
+                .StartsAt(1)
+                .IncrementsBy(1);
+
             var roles = Enum.GetValues<UserRole>().Select(r => new Role
             {
                 Id = ((int)r).ToString(),
@@ -39,6 +46,25 @@ namespace WebShop.Sql
             });
 
             modelBuilder.Entity<Role>().HasData(roles);
+
+            modelBuilder.Entity<Order>()
+                .OwnsOne(o => o.DeliveryAddress);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.PublicOrderNumber)
+                .HasDefaultValueSql("NEXT VALUE FOR OrderNumbers");
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.PaymentDetails)
+                .WithMany(pd => pd.Orders)
+                .HasForeignKey(o => o.PaymentDetailsId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<PaymentDetails>()
+                .HasMany(pd => pd.Orders)
+                .WithOne(o => o.PaymentDetails)
+                .HasForeignKey(o => o.PaymentDetailsId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

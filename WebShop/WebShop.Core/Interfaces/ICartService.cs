@@ -1,4 +1,5 @@
-﻿using WebShop.Core.Models.Product;
+﻿using WebShop.Core.Models.Cart;
+using WebShop.Core.Models.Product;
 
 namespace WebShop.Core.Interfaces
 {

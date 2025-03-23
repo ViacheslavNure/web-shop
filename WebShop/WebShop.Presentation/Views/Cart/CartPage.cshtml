@@ -1,4 +1,4 @@
-@model WebShop.Core.Models.Product.CartViewModel
+@model WebShop.Core.Models.Cart.CartViewModel
 
 <div class="container mt-5 pt-5">
     <h2 class="mb-4">Корзина</h2>
@@ -52,7 +52,7 @@
                             <span>Сумма:</span>
                             <span id="totalPrice" class="h5 mb-0">@Model.TotalPrice грн.</span>
                         </div>
-                        <button class="btn btn-primary w-100">Оформить заказ</button>
+                        <a asp-controller="Orders" asp-action="CreateOrderPage" class="btn btn-dark w-100">Оформити замовлення</a>
                     </div>
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
             <h3>Корзина пуста</h3>
             <p class="text-muted">Добавьте товары в корзину, чтобы оформить заказ</p>
-            <a asp-controller="Products" asp-action="GridView" class="btn btn-primary">Перейти к покупкам</a>
+            <a asp-controller="Products" asp-action="GridView" class="btn btn-dark">Перейти до покупок</a>
         </div>
     }
 </div>
@@ -73,15 +73,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteConfirmModalLabel">Подтверждение удаления</h5>
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Ви впевнені що хочете видалити товар <span id="productName"></span> з корзини?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <p>Вы уверены, что хотите удалить товар <span id="productName"></span> из корзины?</p>
-            </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">Удалить</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Відхилити</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Видалити</button>
             </div>
         </div>
     </div>
@@ -139,11 +136,11 @@
                         const priceElement = card.querySelector('.item-price');
                         priceElement.textContent = `Ціна: ${data.itemPrice} грн.`;
                     } else {
-                        alert('Произошла ошибка при обновлении количества товара');
+                        alert('Виникла помилка під час оновлення кількості товару');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Произошла ошибка при обновлении количества товара');
+                    alert('Виникла помилка під час оновлення кількості товару');
                 }
             }
 
@@ -185,11 +182,11 @@
                             document.getElementById('totalItems').textContent = data.totalItems;
                             document.getElementById('totalPrice').textContent = data.totalPrice + ' грн.';
                         } else {
-                            alert('Ошибка при удалении товара из корзины');
+                            alert('Виникла помилка під час видалення товару з корзини');
                         }
                     } catch (error) {
                         console.error('Error:', error);
-                        alert('Произошла ошибка при удалении товара из корзины');
+                        alert('Виникла помилка під час видалення товару з корзини');
                     } finally {
                         deleteModal.hide();
                         currentProductId = null;

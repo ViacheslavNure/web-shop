@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebShop.Sql;
 
@@ -11,9 +12,11 @@ using WebShop.Sql;
 namespace WebShop.Sql.Migrations
 {
     [DbContext(typeof(WebShopContext))]
-    partial class WebShopContextModelSnapshot : ModelSnapshot
+    [Migration("20250323095730_FixammountOfproductsEntity")]
+    partial class FixammountOfproductsEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -600,14 +603,17 @@ namespace WebShop.Sql.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<string>("City")
+                                .IsRequired()
                                 .HasMaxLength(50)
                                 .HasColumnType("nvarchar(50)");
 
                             b1.Property<string>("OrderDeliveryAddress")
+                                .IsRequired()
                                 .HasMaxLength(200)
                                 .HasColumnType("nvarchar(200)");
 
                             b1.Property<string>("PostalCode")
+                                .IsRequired()
                                 .HasMaxLength(10)
                                 .HasColumnType("nvarchar(10)");
 

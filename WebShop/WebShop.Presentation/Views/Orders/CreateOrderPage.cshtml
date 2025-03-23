@@ -1,0 +1,151 @@
+@model WebShop.Core.Models.Order.CheckoutViewModel
+@using WebShop.Core.Extensions
+@using WebShop.Core.Models.Order
+
+<div class="container mt-5 pt-5">
+    <h2 class="mb-4">Оформлення замовлення</h2>
+
+    <form asp-controller="Orders" asp-action="SubmitOrder" method="post">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Спосіб доставки</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            @foreach (var method in Enum.GetValues(typeof(DeliveryMethod)))
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input delivery-method" type="radio" asp-for="DeliveryMethod" value="@method" id="delivery@(method)" />
+                                    <label class="form-check-label" for="delivery@(method)">
+                                        @(((DeliveryMethod)method).GetDisplayName())
+                                    </label>
+                                </div>
+                            }
+                            <span asp-validation-for="DeliveryMethod" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4" id="deliveryAddressSection">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">2. Адреса доставки</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="City" class="form-label"></label>
+                            <input asp-for="City" class="form-control" />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DeliveryAddress" class="form-label"></label>
+                            <input asp-for="DeliveryAddress" class="form-control" />
+                            <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="PostalCode" class="form-label"></label>
+                            <input asp-for="PostalCode" class="form-control" />
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">3. Платіжні дані</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="CardNumber" class="form-label"></label>
+                            <input asp-for="CardNumber" class="form-control" placeholder="1234 5678 9012 3456" />
+                            <span asp-validation-for="CardNumber" class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CardExpiry" class="form-label"></label>
+                                <input asp-for="CardExpiry" class="form-control" placeholder="MM/YY" />
+                                <span asp-validation-for="CardExpiry" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CardCvv" class="form-label"></label>
+                                <input asp-for="CardCvv" class="form-control" placeholder="123" />
+                                <span asp-validation-for="CardCvv" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">4. Додаткова інформація</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="OrderComments" class="form-label"></label>
+                            <textarea asp-for="OrderComments" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Разом</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Сума замовлення:</span>
+                            <span class="h5 mb-0">@Model.TotalPrice грн.</span>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 mt-3">Підтвердити замовлення</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('CardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})/g, '$1 ').trim();
+            e.target.value = value;
+        });
+
+        document.getElementById('CardExpiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2);
+            }
+            e.target.value = value;
+        });
+
+        document.querySelectorAll('.delivery-method').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const deliveryAddressSection = document.getElementById('deliveryAddressSection');
+                const isSelfPickup = this.value === 'SelfPickup';
+                
+                deliveryAddressSection.style.display = isSelfPickup ? 'none' : 'block';
+                
+                if (isSelfPickup) {
+                    document.getElementById('City').value = '';
+                    document.getElementById('DeliveryAddress').value = '';
+                    document.getElementById('PostalCode').value = '';
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedMethod = document.querySelector('.delivery-method:checked');
+            if (selectedMethod) {
+                const deliveryAddressSection = document.getElementById('deliveryAddressSection');
+                const isSelfPickup = selectedMethod.value === 'SelfPickup';
+                deliveryAddressSection.style.display = isSelfPickup ? 'none' : 'block';
+            }
+        });
+    </script>
+} 

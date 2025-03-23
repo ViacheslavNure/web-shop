@@ -72,5 +72,12 @@ namespace WebShop.Presentation.Controllers
                 lockoutOnFailure: false);
             return RedirectToAction(nameof(ProductsController.GridView), "Products");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction(nameof(ProductsController.GridView), "Products");
+        }
     }
 }
