@@ -1,6 +1,6 @@
 ﻿.image-preview {
     width: 60%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1920 / 1080;
     border: 2px dashed #ccc;
     display: flex;
     align-items: center;
@@ -8,4 +8,6 @@
     background-color: #f8f9fa;
     margin: 10px auto;
     overflow: hidden;
+    position: relative;
+    min-height: 200px;
 }

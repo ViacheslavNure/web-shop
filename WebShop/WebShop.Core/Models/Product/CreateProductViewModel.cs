@@ -14,6 +14,6 @@ namespace WebShop.Core.Models.Product
 
         public string Category { get; set; }
 
-        public IEnumerable<ProductFeaturesCategoryViewModel> Features { get; set; }
+        public IEnumerable<CreateProductFeatureViewModel> Features { get; set; }
     }
 }

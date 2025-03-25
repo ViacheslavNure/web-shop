@@ -8,29 +8,31 @@ $(document).ready(function () {
 
 // Create product image preview script
 $(document).ready(function () {
-    $(".dropdown-item").click(function () {
-        var selectedText = $(this).attr("data-value");
-        $("#selectedValue").val(selectedText);
-    });
-
-    $("#productImage").change(function (event) {
-        var input = event.target;
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $("#imagePreview").html('<img src="' + e.target.result + '" style="max-width: 100%;max-height: 100 %;" alt="Uploaded image">');
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    });
-});
+     $(".dropdown-item").click(function () {
+         var selectedText = $(this).attr("data-value");
+         $("#selectedValue").val(selectedText);
+     });
+ 
+     $("#productImage").change(function (event) {
+         var input = event.target;
+         if (input.files && input.files[0]) {
+             var reader = new FileReader();
+             reader.onload = function (e) {
+                 $("#imagePreview").html('<img src="' + e.target.result + '" style="max-width: 100%;max-height: 100 %;" alt="Uploaded image">');
+             }
+             reader.readAsDataURL(input.files[0]);
+         }
+     });
+ });
 
 // Create product feature adding mechanism
 $(document).ready(function () {
+    var featureCounter = 0;
+
     $("#addCategoryBtn").click(function () {
         var categoryIndex = $(".category-group").length;
-        var categoryHtml = `<div class="mb-3 category-group">
-            <input type="text" class="form-control mb-2 category-name h3" name="Features[${categoryIndex}].Name" placeholder="Назва групи характеристик">
+        var categoryHtml = `<div class="mb-3 category-group" data-category-index="${categoryIndex}">
+            <input type="text" class="form-control mb-2 category-name h3" placeholder="Назва групи характеристик">
             <button type="button" class="btn btn-secondary addFeatureBtn">Додати характеристику</button>
             <div class="featureContainer mt-2"></div>
         </div>`;
@@ -38,13 +40,23 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".addFeatureBtn", function () {
-        var categoryIndex = $(this).closest(".category-group").index(); // Получаем индекс категории
-        var featureIndex = $(this).siblings(".featureContainer").children(".feature-group").length; // Индекс фичи
+        var categoryGroup = $(this).closest(".category-group");
+        var categoryName = categoryGroup.find(".category-name").val() || "";
+        
         var featureHtml = `<div class="feature-group border rounded-2 p-3 mb-1">
-            <input type="text" class="form-control mt-2" name="Features[${categoryIndex}].Features[${featureIndex}].Name" placeholder="Назва харктеристи">
-            <input type="text" class="form-control mt-2" name="Features[${categoryIndex}].Features[${featureIndex}].Value" placeholder="Значення">
+            <input type="hidden" class="category-name-hidden" name="Features[${featureCounter}].CategoryName" value="${categoryName}">
+            <input type="text" class="form-control mt-2" name="Features[${featureCounter}].Name" placeholder="Назва харктеристики">
+            <input type="text" class="form-control mt-2" name="Features[${featureCounter}].Value" placeholder="Значення">
         </div>`;
         $(this).siblings(".featureContainer").append(featureHtml);
+        featureCounter++;
+    });
+
+    $(document).on("input", ".category-name", function() {
+        var categoryGroup = $(this).closest(".category-group");
+        var categoryName = $(this).val() || "";
+        
+        categoryGroup.find(".feature-group .category-name-hidden").val(categoryName);
     });
 });
 

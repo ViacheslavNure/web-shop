@@ -76,7 +76,10 @@ namespace WebShop.Presentation.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateProduct(CreateProductViewModel productViewModel, IFormFile productImage, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateProduct(
+            CreateProductViewModel productViewModel,
+            IFormFile productImage,
+            CancellationToken cancellationToken)
         {
             await productService.CreateProductAsync(productImage, webHostEnvironment.WebRootPath, productViewModel, cancellationToken);
 

@@ -1,24 +1,27 @@
 ﻿@using WebShop.Core.Models.Product
 @model ProductGridFilterViewModel
 
-<div class="m-3 bg-light-subtle vh-100">
+<div class="m-3 bg-light-subtle vh-90">
+    <br />
+    <br />
+
     <form asp-controller="Products" asp-action="FilterGridView" method="post">
         <div>
-            <h4 class="text-center">Price</h4>
+            <h4 class="text-center">Ціна</h4>
         </div>
         <div class="form-group">
-            From
+            Від
             <input type="number" class="form-control" asp-for="MinPrice" />
         </div>
         <div>
-            To
+            До
             <input type="number" class="form-control" asp-for="MaxPrice" />
         </div>
 
         <hr class="hr" />
 
         <div>
-            <h4 class="text-center">Brands</h4>
+            <h4 class="text-center">Бренди</h4>
         </div>
         <div class="form-group">
             @foreach (var brand in ViewData["Brands"] as List<string> ?? [])

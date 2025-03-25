@@ -16,14 +16,22 @@ namespace WebShop.Core.Services
             var imageName = Guid.NewGuid().ToString() + Path.GetExtension(productImage.FileName);
             await ImageHelper.SaveImageAsync(productImage, imageName, staticFolderPath);
 
+            var features = productViewModel.Features.Select(f => new Feature
+            {
+                Name = f.Name,
+                Value = f.Value,
+                FeatureCategory = dbContext.FearureCategory.FirstOrDefault(fc => fc.Name == f.CategoryName) ?? new FeatureCategory { Name = f.CategoryName }
+            }).ToList();
+
             var product = new Product
             {
                 Brand = productViewModel.Brand,
                 Model = productViewModel.Model,
-                Description = productViewModel.Description,
+                Description = productViewModel.Description ?? string.Empty,
                 Price = productViewModel.Price,
                 ImageName = imageName,
                 ProductCategoryId = dbContext.ProductCategory.First(x => x.Name == productViewModel.Category).Id,
+                Features = features,
             };
 
             await dbContext.Product.AddAsync(product, cancellationToken);
@@ -61,7 +69,8 @@ namespace WebShop.Core.Services
                         Name = f.Name,
                         Value = f.Value
                     })
-                });
+                })
+                .ToList();
 
             return new ProductDetailsViewModel
             {

@@ -6,7 +6,10 @@ using WebShop.Core.Interfaces;
 namespace WebShop.Presentation.Controllers
 {
     [Authorize]
-    public class OrdersController(ICartService cartService, IOrderService orderService, IWebHostEnvironment webHostEnvironment) : Controller
+    public class OrdersController(
+        ICartService cartService,
+        IOrderService orderService,
+        IWebHostEnvironment webHostEnvironment) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> CreateOrderPage(CancellationToken cancellationToken)
