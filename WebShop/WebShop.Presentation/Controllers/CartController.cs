@@ -32,6 +32,10 @@ namespace WebShop.Presentation.Controllers
             try
             {
                 var userId = userManager.GetUserId(User);
+                if (userId is null)
+                {
+                    return RedirectToAction(nameof(AuthorizationController.LoginPage), "Authorization");
+                }
 
                 await cartService.AddProductToCartAsync(request.ProductId, userId, cancellationToken);
                 

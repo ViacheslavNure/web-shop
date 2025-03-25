@@ -23,6 +23,8 @@ namespace WebShop.Core.Services
                     UserId = userId,
                     ProductItems = new List<AmountOfProducts>()
                 };
+
+                dbContext.Cart.Add(cart);
             }
 
             var existingCartItem = cart.ProductItems
@@ -54,9 +56,13 @@ namespace WebShop.Core.Services
                 .ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(c => c.UserId == userId, cancellationToken);
 
-            if (cart is null)
+            if (cart == null)
             {
-                throw new ArgumentException($"Cart for the user with ID {userId} not found");
+                cart = new Cart
+                {
+                    UserId = userId,
+                    ProductItems = new List<AmountOfProducts>()
+                };
             }
 
             var totalPrice = cart.ProductItems.Sum(p => p.Product.Price * p.ProductsAmmount);

@@ -24,7 +24,6 @@ namespace WebShop.Core.Services
                     DeliveryAddress = o.DeliveryAddress.OrderDeliveryAddress,
                     DeliveryMethod = Enum.Parse<DeliveryMethod>(o.DeliveryMethod, true),
                     TotalPrice = o.TotalPrice,
-                    Status = "Виконано" // В будущем можно добавити статуси замовлень
                 })
                 .ToListAsync();
 

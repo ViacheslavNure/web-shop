@@ -61,7 +61,6 @@
                                         <th scope="col">Адреса</th>
                                         <th scope="col">Метод доставки</th>
                                         <th scope="col">Сума</th>
-                                        <th scope="col">Статус</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,7 +72,6 @@
                                             <td>@order.DeliveryAddress</td>
                                             <td>@MapOrderDeliveryMethod(order.DeliveryMethod)</td>
                                             <td>@order.TotalPrice.ToString("C2")</td>
-                                            <td><span class="badge bg-success">@order.Status</span></td>
                                         </tr>
                                     }
                                 </tbody>

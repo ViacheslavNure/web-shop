@@ -5,6 +5,19 @@
     ViewData["Title"] = "Assortment";
 }
 
+<div class="d-flex justify-content-end mb-3" style="margin-top: 70px;">
+    <div class="dropdown">
+        <button class="btn btn-dark dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-sort-down me-2"></i>Сортування
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+            <li><a class="dropdown-item" href="#" data-sort="popular">За популярністю</a></li>
+            <li><a class="dropdown-item" href="#" data-sort="price-asc">Від дешевших</a></li>
+            <li><a class="dropdown-item" href="#" data-sort="price-desc">Від дорожчих</a></li>
+        </ul>
+    </div>
+</div>
+
 @if (Model.Products is null || !Model.Products.Products.Any())
 {
     <div class="text-center">
@@ -13,7 +26,7 @@
     return;
 }
 
-<div class="row" style="margin-top: 100px;">
+<div class="row">
     @foreach (var product in Model.Products.Products)
     {
         <div class="col-4 mb-4">
@@ -35,4 +48,33 @@
             <partial name="/Views/Shared/_FiltersComponent.cshtml" model="Model.Filters"/>
         </div>
     </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUrl = new URL(window.location.href);
+            const currentSort = currentUrl.searchParams.get('sort') || 'popular';
+            
+            // Установка активного элемента в дропдауне
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                if (item.dataset.sort === currentSort) {
+                    item.classList.add('active');
+                    document.getElementById('sortDropdown').innerHTML = 
+                        `<i class="bi bi-sort-down me-2"></i>${item.textContent}`;
+                }
+            });
+
+            // Обработка клика по элементам дропдауна
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sortValue = this.dataset.sort;
+                    currentUrl.searchParams.set('sort', sortValue);
+                    window.location.href = currentUrl.toString();
+                });
+            });
+        });
+    </script>
 }

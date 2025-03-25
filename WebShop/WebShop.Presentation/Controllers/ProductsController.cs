@@ -15,6 +15,7 @@ namespace WebShop.Presentation.Controllers
             int pageNumber = 1,
             int amountPerpage = 18,
             ProductGridFilterViewModel filters = null!,
+            string sort = "popular",
             CancellationToken cancellationToken = default)
         {
             if(selectedProductsCategoryId == default)
@@ -28,6 +29,7 @@ namespace WebShop.Presentation.Controllers
                 amountPerpage,
                 webHostEnvironment.WebRootPath,
                 filters,
+                sort,
                 cancellationToken);
 
             ViewData["ShowNavbar"] = true;

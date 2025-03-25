@@ -22,14 +22,4 @@ namespace WebShop.Core.Models.User
 
         public List<UserOrderViewModel> RecentOrders { get; set; }
     }
-
-    public class UserOrderViewModel
-    {
-        public long OrderNumber { get; set; }
-        public DateTime OrderDate { get; set; }
-        public string DeliveryAddress { get; set; }
-        public DeliveryMethod DeliveryMethod { get; set; }
-        public decimal TotalPrice { get; set; }
-        public string Status { get; set; }
-    }
 } 

@@ -92,7 +92,8 @@ namespace WebShop.Core.Services
             int amountPerPage,
             string staticFilesFolderPath,
             ProductGridFilterViewModel filters,
-            CancellationToken cancellationToken)
+            string sort = "popular",
+            CancellationToken cancellationToken = default)
         {
             var itemsToSkip = (pageNumber - 1) * amountPerPage;
 
@@ -121,6 +122,13 @@ namespace WebShop.Core.Services
             {
                 productsQuery = ApplyProductFilters(productsQuery, filters);
             }
+
+            productsQuery = sort switch
+            {
+                "price-asc" => productsQuery.OrderBy(p => p.Price),
+                "price-desc" => productsQuery.OrderByDescending(p => p.Price),
+                _ => productsQuery.OrderByDescending(p => p.LikesCount)
+            };
 
             var products = await productsQuery
                 .Skip(itemsToSkip)

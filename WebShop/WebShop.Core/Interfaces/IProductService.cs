@@ -12,7 +12,8 @@ namespace WebShop.Core.Interfaces
             int amountPerPage,
             string staticFilesFolderPath,
             ProductGridFilterViewModel filters,
-            CancellationToken cancellationToken);
+            string sort = "popular",
+            CancellationToken cancellationToken = default);
 
         Task<ProductDetailsViewModel> GetProductDetails(
             Guid productId,
