@@ -66,12 +66,19 @@ namespace WebShop.Presentation.Controllers
                 return View(nameof(LoginPage), credentials);
             }
 
-            await signInManager.PasswordSignInAsync(
+            var user = await signInManager.PasswordSignInAsync(
                 credentials.UserName,
                 credentials.Password,
                 isPersistent: false,
                 lockoutOnFailure: false);
-            return RedirectToAction(nameof(ProductsController.GridView), "Products");
+
+            if (!user.Succeeded)
+            {
+                ModelState.AddModelError("Username", "Username or password is wrong.");
+                return View(nameof(LoginPage), credentials);
+            }
+
+                return RedirectToAction(nameof(ProductsController.GridView), "Products");
         }
 
         [HttpPost]

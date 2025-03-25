@@ -102,3 +102,15 @@ document.addEventListener('DOMContentLoaded', async function () {
         console.error('Error fetching cart count:', error);
     }
 }); 
+
+// Highlite active category
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryLinks = document.querySelectorAll('.category-link');
+    const currentUrl = window.location.href;
+    
+    categoryLinks.forEach(link => {
+        if (currentUrl.includes(link.getAttribute('href'))) {
+            link.classList.add('active');
+        }
+    });
+}); 
