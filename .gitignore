@@ -400,4 +400,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Ignore all files in the wwwroot/images directory
-wwwroot/images/
+**/wwwroot/images/*
+!**/wwwroot/images/.gitkeep
